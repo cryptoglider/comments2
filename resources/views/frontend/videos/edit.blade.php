@@ -24,8 +24,8 @@
                             <span class="help-block">{{ trans('cruds.video.fields.title_helper') }}</span>
                         </div>
                         <div class="form-group">
-                            <label class="required" for="link">{{ trans('cruds.video.fields.link') }}</label>
-                            <input class="form-control" type="text" name="link" id="link" value="{{ old('link', $video->link) }}" required>
+                            <label for="link">{{ trans('cruds.video.fields.link') }}</label>
+                            <input class="form-control" type="text" name="link" id="link" value="{{ old('link', $video->link) }}">
                             @if($errors->has('link'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('link') }}
@@ -49,6 +49,17 @@
                             <span class="help-block">{{ trans('cruds.video.fields.status_helper') }}</span>
                         </div>
                         <div class="form-group">
+                            <label for="doc">{{ trans('cruds.video.fields.doc') }}</label>
+                            <div class="needsclick dropzone" id="doc-dropzone">
+                            </div>
+                            @if($errors->has('doc'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('doc') }}
+                                </div>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.video.fields.doc_helper') }}</span>
+                        </div>
+                        <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}
                             </button>
@@ -60,4 +71,57 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    Dropzone.options.docDropzone = {
+    url: '{{ route('frontend.videos.storeMedia') }}',
+    maxFilesize: 10, // MB
+    maxFiles: 1,
+    addRemoveLinks: true,
+    headers: {
+      'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    },
+    params: {
+      size: 10
+    },
+    success: function (file, response) {
+      $('form').find('input[name="doc"]').remove()
+      $('form').append('<input type="hidden" name="doc" value="' + response.name + '">')
+    },
+    removedfile: function (file) {
+      file.previewElement.remove()
+      if (file.status !== 'error') {
+        $('form').find('input[name="doc"]').remove()
+        this.options.maxFiles = this.options.maxFiles + 1
+      }
+    },
+    init: function () {
+@if(isset($video) && $video->doc)
+      var file = {!! json_encode($video->doc) !!}
+          this.options.addedfile.call(this, file)
+      file.previewElement.classList.add('dz-complete')
+      $('form').append('<input type="hidden" name="doc" value="' + file.file_name + '">')
+      this.options.maxFiles = this.options.maxFiles - 1
+@endif
+    },
+     error: function (file, response) {
+         if ($.type(response) === 'string') {
+             var message = response //dropzone sends it's own error messages in string
+         } else {
+             var message = response.errors.file
+         }
+         file.previewElement.classList.add('dz-error')
+         _ref = file.previewElement.querySelectorAll('[data-dz-errormessage]')
+         _results = []
+         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+             node = _ref[_i]
+             _results.push(node.textContent = message)
+         }
+
+         return _results
+     }
+}
+</script>
 @endsection

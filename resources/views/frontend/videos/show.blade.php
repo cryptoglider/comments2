@@ -50,6 +50,18 @@
                                         {{ App\Models\Video::STATUS_SELECT[$video->status] ?? '' }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.video.fields.doc') }}
+                                    </th>
+                                    <td>
+                                        @if($video->doc)
+                                            <a href="{{ $video->doc->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">

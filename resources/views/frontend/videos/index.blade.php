@@ -39,6 +39,9 @@
                                         {{ trans('cruds.video.fields.status') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.video.fields.doc') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -57,6 +60,13 @@
                                         </td>
                                         <td>
                                             {{ App\Models\Video::STATUS_SELECT[$video->status] ?? '' }}
+                                        </td>
+                                        <td>
+                                            @if($video->doc)
+                                                <a href="{{ $video->doc->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endif
                                         </td>
                                         <td>
                                             @can('video_show')
