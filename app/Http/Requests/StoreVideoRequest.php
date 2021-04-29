@@ -23,7 +23,7 @@ class StoreVideoRequest extends FormRequest
             ],
             'link' => [
                 'string',
-                'required',
+                'nullable',
             ],
         ];
     }

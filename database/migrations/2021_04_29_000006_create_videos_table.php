@@ -11,7 +11,7 @@ class CreateVideosTable extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->string('link');
+            $table->string('link')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -4,23 +4,26 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\CsvImportTrait;
+use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyVideoRequest;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Models\Video;
 use Gate;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 
 class VideosController extends Controller
 {
+    use MediaUploadingTrait;
     use CsvImportTrait;
 
     public function index()
     {
         abort_if(Gate::denies('video_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $videos = Video::all();
+        $videos = Video::with(['media'])->get();
 
         return view('frontend.videos.index', compact('videos'));
     }
@@ -36,6 +39,14 @@ class VideosController extends Controller
     {
         $video = Video::create($request->all());
 
+        if ($request->input('doc', false)) {
+            $video->addMedia(storage_path('tmp/uploads/' . basename($request->input('doc'))))->toMediaCollection('doc');
+        }
+
+        if ($media = $request->input('ck-media', false)) {
+            Media::whereIn('id', $media)->update(['model_id' => $video->id]);
+        }
+
         return redirect()->route('frontend.videos.index');
     }
 
@@ -49,6 +60,17 @@ class VideosController extends Controller
     public function update(UpdateVideoRequest $request, Video $video)
     {
         $video->update($request->all());
+
+        if ($request->input('doc', false)) {
+            if (!$video->doc || $request->input('doc') !== $video->doc->file_name) {
+                if ($video->doc) {
+                    $video->doc->delete();
+                }
+                $video->addMedia(storage_path('tmp/uploads/' . basename($request->input('doc'))))->toMediaCollection('doc');
+            }
+        } elseif ($video->doc) {
+            $video->doc->delete();
+        }
 
         return redirect()->route('frontend.videos.index');
     }
@@ -76,5 +98,17 @@ class VideosController extends Controller
         Video::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function storeCKEditorImages(Request $request)
+    {
+        abort_if(Gate::denies('video_create') && Gate::denies('video_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $model         = new Video();
+        $model->id     = $request->input('crud_id', 0);
+        $model->exists = true;
+        $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
+
+        return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
     }
 }

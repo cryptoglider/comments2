@@ -23,7 +23,7 @@ class UpdateVideoRequest extends FormRequest
             ],
             'link' => [
                 'string',
-                'required',
+                'nullable',
             ],
         ];
     }
