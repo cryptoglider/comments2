@@ -63,6 +63,20 @@
                             <span class="help-block">{{ trans('cruds.comment.fields.user_email_helper') }}</span>
                         </div>
                         <div class="form-group">
+                            <label for="answer_id">{{ trans('cruds.comment.fields.answer') }}</label>
+                            <select class="form-control select2" name="answer_id" id="answer_id">
+                                @foreach($answers as $id => $entry)
+                                    <option value="{{ $id }}" {{ old('answer_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                @endforeach
+                            </select>
+                            @if($errors->has('answer'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('answer') }}
+                                </div>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.comment.fields.answer_helper') }}</span>
+                        </div>
+                        <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}
                             </button>

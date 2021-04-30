@@ -42,6 +42,9 @@
                             {{ trans('cruds.comment.fields.user_email') }}
                         </th>
                         <th>
+                            {{ trans('cruds.comment.fields.answer') }}
+                        </th>
+                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -66,6 +69,9 @@
                             </td>
                             <td>
                                 {{ $comment->user_email ?? '' }}
+                            </td>
+                            <td>
+                                {{ $comment->answer->text ?? '' }}
                             </td>
                             <td>
                                 @can('comment_show')

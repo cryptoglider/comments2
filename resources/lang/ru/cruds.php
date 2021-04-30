@@ -107,6 +107,8 @@ return [
             'deleted_at_helper' => ' ',
             'user_email'        => 'Email исполнителя',
             'user_email_helper' => ' ',
+            'answer'            => 'Это ответ на комментарий',
+            'answer_helper'     => ' ',
         ],
     ],
     'auditLog' => [
