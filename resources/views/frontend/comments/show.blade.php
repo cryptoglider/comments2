@@ -58,6 +58,14 @@
                                         {{ $comment->user_email }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.comment.fields.answer') }}
+                                    </th>
+                                    <td>
+                                        {{ $comment->answer->text ?? '' }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">
