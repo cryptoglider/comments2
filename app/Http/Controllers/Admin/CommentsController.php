@@ -21,7 +21,7 @@ class CommentsController extends Controller
     {
         abort_if(Gate::denies('comment_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $comments = Comment::with(['video'])->get();
+        $comments = Comment::with(['video', 'answer'])->get();
 
         return view('admin.comments.index', compact('comments'));
     }
@@ -32,7 +32,9 @@ class CommentsController extends Controller
 
         $videos = Video::all()->pluck('title', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.comments.create', compact('videos'));
+        $answers = Comment::all()->pluck('text', 'id')->prepend(trans('global.pleaseSelect'), '');
+
+        return view('admin.comments.create', compact('videos', 'answers'));
     }
 
     public function store(StoreCommentRequest $request)
@@ -48,9 +50,11 @@ class CommentsController extends Controller
 
         $videos = Video::all()->pluck('title', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $comment->load('video');
+        $answers = Comment::all()->pluck('text', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.comments.edit', compact('videos', 'comment'));
+        $comment->load('video', 'answer');
+
+        return view('admin.comments.edit', compact('videos', 'answers', 'comment'));
     }
 
     public function update(UpdateCommentRequest $request, Comment $comment)
@@ -64,7 +68,7 @@ class CommentsController extends Controller
     {
         abort_if(Gate::denies('comment_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $comment->load('video');
+        $comment->load('video', 'answer', 'answerComments');
 
         return view('admin.comments.show', compact('comment'));
     }

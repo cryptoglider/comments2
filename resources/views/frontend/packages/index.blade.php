@@ -3,46 +3,37 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            @can('video_create')
+            @can('package_create')
                 <div style="margin-bottom: 10px;" class="row">
                     <div class="col-lg-12">
-                        <a class="btn btn-success" href="{{ route('frontend.videos.create') }}">
-                            {{ trans('global.add') }} {{ trans('cruds.video.title_singular') }}
+                        <a class="btn btn-success" href="{{ route('frontend.packages.create') }}">
+                            {{ trans('global.add') }} {{ trans('cruds.package.title_singular') }}
                         </a>
                         <button class="btn btn-warning" data-toggle="modal" data-target="#csvImportModal">
                             {{ trans('global.app_csvImport') }}
                         </button>
-                        @include('csvImport.modal', ['model' => 'Video', 'route' => 'admin.videos.parseCsvImport'])
+                        @include('csvImport.modal', ['model' => 'Package', 'route' => 'admin.packages.parseCsvImport'])
                     </div>
                 </div>
             @endcan
             <div class="card">
                 <div class="card-header">
-                    {{ trans('cruds.video.title_singular') }} {{ trans('global.list') }}
+                    {{ trans('cruds.package.title_singular') }} {{ trans('global.list') }}
                 </div>
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class=" table table-bordered table-striped table-hover datatable datatable-Video">
+                        <table class=" table table-bordered table-striped table-hover datatable datatable-Package">
                             <thead>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.video.fields.id') }}
+                                        {{ trans('cruds.package.fields.id') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.video.fields.title') }}
+                                        {{ trans('cruds.package.fields.title') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.video.fields.link') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.video.fields.status') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.video.fields.doc') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.video.fields.start_comments') }}
+                                        {{ trans('cruds.package.fields.videos') }}
                                     </th>
                                     <th>
                                         &nbsp;
@@ -50,45 +41,34 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($videos as $key => $video)
-                                    <tr data-entry-id="{{ $video->id }}">
+                                @foreach($packages as $key => $package)
+                                    <tr data-entry-id="{{ $package->id }}">
                                         <td>
-                                            {{ $video->id ?? '' }}
+                                            {{ $package->id ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $video->title ?? '' }}
+                                            {{ $package->title ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $video->link ?? '' }}
+                                            @foreach($package->videos as $key => $item)
+                                                <span>{{ $item->title }}</span>
+                                            @endforeach
                                         </td>
                                         <td>
-                                            {{ App\Models\Video::STATUS_SELECT[$video->status] ?? '' }}
-                                        </td>
-                                        <td>
-                                            @if($video->doc)
-                                                <a href="{{ $video->doc->getUrl() }}" target="_blank">
-                                                    {{ trans('global.view_file') }}
-                                                </a>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $video->start_comments ?? '' }}
-                                        </td>
-                                        <td>
-                                            @can('video_show')
-                                                <a class="btn btn-xs btn-primary" href="{{ route('frontend.videos.show', $video->id) }}">
+                                            @can('package_show')
+                                                <a class="btn btn-xs btn-primary" href="{{ route('frontend.packages.show', $package->id) }}">
                                                     {{ trans('global.view') }}
                                                 </a>
                                             @endcan
 
-                                            @can('video_edit')
-                                                <a class="btn btn-xs btn-info" href="{{ route('frontend.videos.edit', $video->id) }}">
+                                            @can('package_edit')
+                                                <a class="btn btn-xs btn-info" href="{{ route('frontend.packages.edit', $package->id) }}">
                                                     {{ trans('global.edit') }}
                                                 </a>
                                             @endcan
 
-                                            @can('video_delete')
-                                                <form action="{{ route('frontend.videos.destroy', $video->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                            @can('package_delete')
+                                                <form action="{{ route('frontend.packages.destroy', $package->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                     <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -114,11 +94,11 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('video_delete')
+@can('package_delete')
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('frontend.videos.massDestroy') }}",
+    url: "{{ route('frontend.packages.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
@@ -149,7 +129,7 @@
     order: [[ 1, 'desc' ]],
     pageLength: 100,
   });
-  let table = $('.datatable-Video:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  let table = $('.datatable-Package:not(.ajaxTable)').DataTable({ buttons: dtButtons })
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

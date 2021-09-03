@@ -1,43 +1,39 @@
-@can('comment_create')
+@extends('layouts.admin')
+@section('content')
+@can('package_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.comments.create') }}">
-                {{ trans('global.add') }} {{ trans('cruds.comment.title_singular') }}
+            <a class="btn btn-success" href="{{ route('admin.packages.create') }}">
+                {{ trans('global.add') }} {{ trans('cruds.package.title_singular') }}
             </a>
+            <button class="btn btn-warning" data-toggle="modal" data-target="#csvImportModal">
+                {{ trans('global.app_csvImport') }}
+            </button>
+            @include('csvImport.modal', ['model' => 'Package', 'route' => 'admin.packages.parseCsvImport'])
         </div>
     </div>
 @endcan
-
 <div class="card">
     <div class="card-header">
-        {{ trans('cruds.comment.title_singular') }} {{ trans('global.list') }}
+        {{ trans('cruds.package.title_singular') }} {{ trans('global.list') }}
     </div>
 
     <div class="card-body">
         <div class="table-responsive">
-            <table class=" table table-bordered table-striped table-hover datatable datatable-videoComments">
+            <table class=" table table-bordered table-striped table-hover datatable datatable-Package">
                 <thead>
                     <tr>
                         <th width="10">
 
                         </th>
                         <th>
-                            {{ trans('cruds.comment.fields.id') }}
+                            {{ trans('cruds.package.fields.id') }}
                         </th>
                         <th>
-                            {{ trans('cruds.comment.fields.text') }}
+                            {{ trans('cruds.package.fields.title') }}
                         </th>
                         <th>
-                            {{ trans('cruds.comment.fields.video') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.comment.fields.status') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.comment.fields.user_email') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.comment.fields.answer') }}
+                            {{ trans('cruds.package.fields.videos') }}
                         </th>
                         <th>
                             &nbsp;
@@ -45,44 +41,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($comments as $key => $comment)
-                        <tr data-entry-id="{{ $comment->id }}">
+                    @foreach($packages as $key => $package)
+                        <tr data-entry-id="{{ $package->id }}">
                             <td>
 
                             </td>
                             <td>
-                                {{ $comment->id ?? '' }}
+                                {{ $package->id ?? '' }}
                             </td>
                             <td>
-                                {{ $comment->text ?? '' }}
+                                {{ $package->title ?? '' }}
                             </td>
                             <td>
-                                {{ $comment->video->title ?? '' }}
+                                @foreach($package->videos as $key => $item)
+                                    <span class="badge badge-info">{{ $item->title }}</span>
+                                @endforeach
                             </td>
                             <td>
-                                {{ App\Models\Comment::STATUS_SELECT[$comment->status] ?? '' }}
-                            </td>
-                            <td>
-                                {{ $comment->user_email ?? '' }}
-                            </td>
-                            <td>
-                                {{ $comment->answer->text ?? '' }}
-                            </td>
-                            <td>
-                                @can('comment_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.comments.show', $comment->id) }}">
+                                @can('package_show')
+                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.packages.show', $package->id) }}">
                                         {{ trans('global.view') }}
                                     </a>
                                 @endcan
 
-                                @can('comment_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.comments.edit', $comment->id) }}">
+                                @can('package_edit')
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.packages.edit', $package->id) }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
 
-                                @can('comment_delete')
-                                    <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                @can('package_delete')
+                                    <form action="{{ route('admin.packages.destroy', $package->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -99,16 +88,19 @@
     </div>
 </div>
 
+
+
+@endsection
 @section('scripts')
 @parent
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('comment_delete')
+@can('package_delete')
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('admin.comments.massDestroy') }}",
+    url: "{{ route('admin.packages.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
@@ -139,7 +131,7 @@
     order: [[ 1, 'desc' ]],
     pageLength: 100,
   });
-  let table = $('.datatable-videoComments:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  let table = $('.datatable-Package:not(.ajaxTable)').DataTable({ buttons: dtButtons })
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

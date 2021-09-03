@@ -59,6 +59,14 @@
                             @endif
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('cruds.video.fields.start_comments') }}
+                        </th>
+                        <td>
+                            {{ $video->start_comments }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">

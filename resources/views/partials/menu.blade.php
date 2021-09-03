@@ -82,6 +82,16 @@
                 </a>
             </li>
         @endcan
+        @can('package_access')
+            <li class="c-sidebar-nav-item">
+                <a href="{{ route("admin.packages.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/packages") || request()->is("admin/packages/*") ? "c-active" : "" }}">
+                    <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
+
+                    </i>
+                    {{ trans('cruds.package.title') }}
+                </a>
+            </li>
+        @endcan
         @can('comment_access')
             <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.comments.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/comments") || request()->is("admin/comments/*") ? "c-active" : "" }}">

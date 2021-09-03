@@ -55,6 +55,14 @@
                             {{ $comment->user_email }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('cruds.comment.fields.answer') }}
+                        </th>
+                        <td>
+                            {{ $comment->answer->text ?? '' }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">
@@ -66,6 +74,22 @@
     </div>
 </div>
 
-
+<div class="card">
+    <div class="card-header">
+        {{ trans('global.relatedData') }}
+    </div>
+    <ul class="nav nav-tabs" role="tablist" id="relationship-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="#answer_comments" role="tab" data-toggle="tab">
+                {{ trans('cruds.comment.title') }}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane" role="tabpanel" id="answer_comments">
+            @includeIf('admin.comments.relationships.answerComments', ['comments' => $comment->answerComments])
+        </div>
+    </div>
+</div>
 
 @endsection
