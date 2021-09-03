@@ -37,6 +37,7 @@ class Video extends Model implements HasMedia
         'title',
         'link',
         'status',
+        'start_comments',
         'created_at',
         'updated_at',
         'deleted_at',

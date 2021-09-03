@@ -112,6 +112,11 @@
                                             {{ trans('cruds.userAlert.title') }}
                                         </a>
                                     @endcan
+                                    @can('package_access')
+                                        <a class="dropdown-item" href="{{ route('frontend.packages.index') }}">
+                                            {{ trans('cruds.package.title') }}
+                                        </a>
+                                    @endcan
 
                                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

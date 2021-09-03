@@ -42,6 +42,9 @@
                             {{ trans('cruds.video.fields.doc') }}
                         </th>
                         <th>
+                            {{ trans('cruds.video.fields.start_comments') }}
+                        </th>
+                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -70,6 +73,9 @@
                                         {{ trans('global.view_file') }}
                                     </a>
                                 @endif
+                            </td>
+                            <td>
+                                {{ $video->start_comments ?? '' }}
                             </td>
                             <td>
                                 @can('video_show')

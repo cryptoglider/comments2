@@ -60,6 +60,16 @@
                             <span class="help-block">{{ trans('cruds.video.fields.doc_helper') }}</span>
                         </div>
                         <div class="form-group">
+                            <label for="start_comments">{{ trans('cruds.video.fields.start_comments') }}</label>
+                            <input class="form-control" type="number" name="start_comments" id="start_comments" value="{{ old('start_comments', '0') }}" step="1">
+                            @if($errors->has('start_comments'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('start_comments') }}
+                                </div>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.video.fields.start_comments_helper') }}</span>
+                        </div>
+                        <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}
                             </button>

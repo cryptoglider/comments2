@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Video;
+use App\Models\Package;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 
-class StoreVideoRequest extends FormRequest
+class StorePackageRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('video_create');
+        return Gate::allows('package_create');
     }
 
     public function rules()
@@ -21,15 +21,11 @@ class StoreVideoRequest extends FormRequest
                 'string',
                 'required',
             ],
-            'link' => [
-                'string',
-                'nullable',
-            ],
-            'start_comments' => [
-                'nullable',
+            'videos.*' => [
                 'integer',
-                'min:-2147483648',
-                'max:2147483647',
+            ],
+            'videos' => [
+                'array',
             ],
         ];
     }

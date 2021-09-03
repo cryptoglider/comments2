@@ -39,6 +39,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('user-alerts/read', 'UserAlertsController@read');
     Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
 
+    // Packages
+    Route::delete('packages/destroy', 'PackagesController@massDestroy')->name('packages.massDestroy');
+    Route::post('packages/parse-csv-import', 'PackagesController@parseCsvImport')->name('packages.parseCsvImport');
+    Route::post('packages/process-csv-import', 'PackagesController@processCsvImport')->name('packages.processCsvImport');
+    Route::resource('packages', 'PackagesController');
+
     Route::get('global-search', 'GlobalSearchController@search')->name('globalSearch');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
@@ -78,6 +84,10 @@ Route::group(['as' => 'frontend.', 'namespace' => 'Frontend', 'middleware' => ['
     // User Alerts
     Route::delete('user-alerts/destroy', 'UserAlertsController@massDestroy')->name('user-alerts.massDestroy');
     Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
+
+    // Packages
+    Route::delete('packages/destroy', 'PackagesController@massDestroy')->name('packages.massDestroy');
+    Route::resource('packages', 'PackagesController');
 
     Route::get('frontend/profile', 'ProfileController@index')->name('profile.index');
     Route::post('frontend/profile', 'ProfileController@update')->name('profile.update');
